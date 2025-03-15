@@ -24,12 +24,12 @@ jobs:
       with:
         go-version: '1.23'
 
-    - name: Install dependencies
-      run: go mod tidy
-    
     - name: make grpc codes
       run: make gen-proto
 
+    - name: Install dependencies
+      run: go mod tidy
+    
     - name: Build
       run: go build -v ./...
 
