@@ -12,6 +12,12 @@ type MemoRepository struct {
 	db *sql.DB
 }
 
+type MemoRepositoryInterface interface {
+	CreateMemo(title, content string) (*proto.Memo, error)
+	GetMemo(id int64) (*proto.Memo, error)
+	ListMemos() ([]*proto.Memo, error)
+}
+
 func NewMemoRepository(dbPath string) (*MemoRepository, error) {
 	db, err := sql.Open("sqlite3", dbPath)
 	if err != nil {

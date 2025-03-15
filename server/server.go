@@ -9,10 +9,10 @@ import (
 
 type server struct {
 	proto.UnimplementedMemoServiceServer
-	repo *repository.MemoRepository
+	repo repository.MemoRepositoryInterface
 }
 
-func NewServer(repo *repository.MemoRepository) *server {
+func NewServer(repo repository.MemoRepositoryInterface) *server {
 	return &server{repo: repo}
 }
 
