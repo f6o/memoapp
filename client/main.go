@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"os"
+	"strconv"
 	"time"
 
 	pb "github.com/f6o/memoapp/proto"
@@ -30,7 +31,11 @@ func main() {
 
 	switch os.Args[1] {
 	case "getMemo":
-		getMemo(client)
+		memoId, err := strconv.ParseInt(os.Args[2], 10, 64)
+		if err != nil {
+			log.Fatalf("invalid memoId: %v", err)
+		}
+		getMemo(client, memoId)
 	case "listMemos":
 		listMemos(client)
 	case "createMemo":
@@ -40,11 +45,11 @@ func main() {
 	}
 }
 
-func getMemo(client pb.MemoServiceClient) {
+func getMemo(client pb.MemoServiceClient, memoId int64) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	req := &pb.GetMemoRequest{MemoId: 1}
+	req := &pb.GetMemoRequest{MemoId: memoId}
 	res, err := client.GetMemo(ctx, req)
 	if err != nil {
 		log.Fatalf("could not get memo: %v", err)
