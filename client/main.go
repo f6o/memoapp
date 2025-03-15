@@ -34,7 +34,7 @@ func main() {
 	case "listMemos":
 		listMemos(client)
 	case "createMemo":
-		createMemo(client)
+		createMemo(client, os.Args[2], os.Args[3])
 	default:
 		log.Fatalf("unknown command: %s", os.Args[1])
 	}
@@ -64,11 +64,11 @@ func listMemos(client pb.MemoServiceClient) {
 	log.Printf("Memos: %v", res.Memos)
 }
 
-func createMemo(client pb.MemoServiceClient) {
+func createMemo(client pb.MemoServiceClient, title, content string) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	req := &pb.CreateMemoRequest{Title: "New Memo", Content: "This is a new memo"}
+	req := &pb.CreateMemoRequest{Title: title, Content: content}
 	res, err := client.CreateMemo(ctx, req)
 	if err != nil {
 		log.Fatalf("could not create memo: %v", err)
