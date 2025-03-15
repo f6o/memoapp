@@ -24,6 +24,20 @@ func NewMemoRepository(dbPath string) (*MemoRepository, error) {
 		return nil, err
 	}
 
+	// テーブルが存在しない場合に作成する
+	createTableQuery := `
+	CREATE TABLE IF NOT EXISTS memos (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		title TEXT NOT NULL,
+		content TEXT NOT NULL,
+		created_at INTEGER NOT NULL,
+		updated_at INTEGER NOT NULL
+	);`
+	_, err = db.Exec(createTableQuery)
+	if err != nil {
+		return nil, err
+	}
+
 	return &MemoRepository{db: db}, nil
 }
 
