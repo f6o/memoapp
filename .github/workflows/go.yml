@@ -16,10 +16,19 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Install Protoc
+      uses: arduino/setup-protoc@v3
+
     - name: Set up Go
       uses: actions/setup-go@v4
       with:
         go-version: '1.23'
+
+    - name: Install dependencies
+      run: go mod tidy
+    
+    - name: make grpc codes
+      run: make gen-proto
 
     - name: Build
       run: go build -v ./...
