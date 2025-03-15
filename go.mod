@@ -5,6 +5,7 @@ go 1.22.0
 toolchain go1.23.7
 
 require (
+	github.com/mattn/go-sqlite3 v1.14.24
 	google.golang.org/grpc v1.71.0
 	google.golang.org/protobuf v1.36.5
 )
