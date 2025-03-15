@@ -5,8 +5,8 @@ import (
 	"net"
 
 	"github.com/f6o/memoapp/proto"
-	"github.com/f6o/memoapp/repository"
 	"github.com/f6o/memoapp/server"
+	"github.com/f6o/memoapp/server/repository"
 	"google.golang.org/grpc"
 )
 

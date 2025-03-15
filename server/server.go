@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/f6o/memoapp/proto"
-	"github.com/f6o/memoapp/repository"
+	"github.com/f6o/memoapp/server/repository"
 )
 
 type server struct {
