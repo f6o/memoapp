@@ -29,15 +29,23 @@ jobs:
             go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
             go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 
-
     - name: make grpc codes
       run: make gen-proto
 
     - name: Install dependencies
       run: go mod tidy
-    
-    - name: Build
-      run: go build -v ./...
 
     - name: Test
       run: go test -v ./...
+
+    - name: Build
+      run: |
+            rm -rf dist
+            mkdir dist
+            go build -o dist/memoapp-server ./main.go
+            go build -o dist/memoapp-client ./client/main.go
+
+    - name: Archive production artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        path: dist
