@@ -4,6 +4,11 @@ go 1.22.0
 
 toolchain go1.23.7
 
+replace (
+	github.com/f6o/memoapp => ./
+	github.com/f6o/memoapp/proto => ./proto
+)
+
 require (
 	github.com/mattn/go-sqlite3 v1.14.24
 	github.com/stretchr/testify v1.10.0
