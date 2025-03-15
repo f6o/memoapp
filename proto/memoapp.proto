@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+option go_package = "github.com/f6o/memoapp/proto";
+
+package memoapp;
+
+message Memo {
+  int64 id = 1;
+  string title = 2;
+  string content = 3;
+  int64 created_at = 4;
+  int64 updated_at = 5;
+}
+
+message GetMemoRequest {
+  int64 memo_id = 1;
+}
+
+message GetMemoResponse {
+  Memo memo = 1;
+}
+
+message ListMemosRequest {}
+
+message ListMemosResponse {
+  repeated Memo memos = 1;
+}
+
+message CreateMemoRequest {
+  string title = 1;
+  string content = 2;
+}
+
+message CreateMemoResponse {
+  Memo memo = 1;
+}
+
+service MemoService {
+  rpc GetMemo(GetMemoRequest) returns (GetMemoResponse);
+  rpc ListMemos(ListMemosRequest) returns (ListMemosResponse);
+  rpc CreateMemo(CreateMemoRequest) returns (CreateMemoResponse);
+}
