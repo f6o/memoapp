@@ -13,11 +13,15 @@ import (
 )
 
 const (
-	address = "localhost:50051"
+	fallbackAddress = "localhost:50051"
 )
 
 func main() {
 	// gRPCサーバーへの接続を確立
+	address := os.Getenv("MEMOAPP_SERVER_ADDRESS")
+	if address == "" {
+		address = fallbackAddress
+	}
 	conn, err := grpc.NewClient(address, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
