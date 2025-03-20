@@ -68,7 +68,7 @@ func getMemo(client pb.MemoServiceClient, memoId int64) {
 }
 
 func listMemos(client pb.MemoServiceClient) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
 	req := &pb.ListMemosRequest{}
@@ -80,7 +80,7 @@ func listMemos(client pb.MemoServiceClient) {
 }
 
 func createMemo(client pb.MemoServiceClient, title, content string) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	req := &pb.CreateMemoRequest{Title: title, Content: content}
