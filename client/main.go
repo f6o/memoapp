@@ -9,7 +9,7 @@ import (
 
 	pb "github.com/f6o/memoapp/proto"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/credentials"
 )
 
 const (
@@ -22,7 +22,13 @@ func main() {
 	if address == "" {
 		address = fallbackAddress
 	}
-	conn, err := grpc.NewClient(address, grpc.WithTransportCredentials(insecure.NewCredentials()))
+
+	cred, err := credentials.NewClientTLSFromFile(os.Getenv("MEMOAPP_SERVER_CERTFILE"), "")
+	if err != nil {
+		log.Fatalf("could not load tls cert: %v", err)
+	}
+
+	conn, err := grpc.NewClient(address, grpc.WithTransportCredentials(cred))
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}

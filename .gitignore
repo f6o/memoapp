@@ -1,2 +1,3 @@
 proto/*.pb.go
 memos.db
+cert.pem
