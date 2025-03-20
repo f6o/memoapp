@@ -1,5 +1,5 @@
 # ベースイメージとしてGoを使用
-FROM golang:1.23 as builder
+FROM golang:1.24-bullseye as builder
 
 RUN apt-get update && \
     apt-get install -y make protobuf-compiler
