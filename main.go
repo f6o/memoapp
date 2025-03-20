@@ -30,7 +30,7 @@ func main() {
 		log.Fatalf("invalid listen address: %v", err)
 	}
 
-	repo, err := repository.NewMemoRepository("memos.db")
+	repo, err := repository.NewMemoRepository(dbFile)
 	if err != nil {
 		log.Fatalf("failed to create repository: %v", err)
 	}
