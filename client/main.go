@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag" // Import the flag package
 	"log"
 	"os"
 	"strconv"
@@ -10,6 +11,7 @@ import (
 	pb "github.com/f6o/memoapp/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/credentials/insecure" // Import for insecure connections
 )
 
 const (
@@ -17,31 +19,54 @@ const (
 )
 
 func main() {
+	// Define a boolean flag for development mode (insecure connection)
+	devMode := flag.Bool("dev", false, "Enable insecure connection for development")
+	flag.Parse() // Parse the command-line flags
+
 	// gRPCサーバーへの接続を確立
 	address := os.Getenv("MEMOAPP_SERVER_ADDRESS")
 	if address == "" {
 		address = fallbackAddress
 	}
 
-	cred, err := credentials.NewClientTLSFromFile(os.Getenv("MEMOAPP_SERVER_CERTFILE"), "")
-	if err != nil {
-		log.Fatalf("could not load tls cert: %v", err)
+	var opts []grpc.DialOption
+	if *devMode {
+		// Use insecure connection if --dev flag is set
+		log.Println("WARNING: Connecting insecurely (--dev mode)")
+		opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	} else {
+		// Use TLS credentials by default
+		certFile := os.Getenv("MEMOAPP_SERVER_CERTFILE")
+		if certFile == "" {
+			log.Fatalf("MEMOAPP_SERVER_CERTFILE environment variable must be set for secure connection")
+		}
+		cred, err := credentials.NewClientTLSFromFile(certFile, "")
+		if err != nil {
+			log.Fatalf("could not load tls cert '%s': %v", certFile, err)
+		}
+		opts = append(opts, grpc.WithTransportCredentials(cred))
 	}
 
-	conn, err := grpc.NewClient(address, grpc.WithTransportCredentials(cred))
+	conn, err := grpc.NewClient(address, opts...) // Pass the options slice
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
 	defer conn.Close()
 	client := pb.NewMemoServiceClient(conn)
 
-	if len(os.Args) < 2 {
-		log.Fatalf("usage: %s [getMemo|listMemos|createMemo]", os.Args[0])
+	// Use flag.Args() to get non-flag arguments
+	args := flag.Args()
+	if len(args) < 1 {
+		log.Fatalf("usage: %s [--dev] [getMemo|listMemos|createMemo] [arguments...]", os.Args[0])
 	}
 
-	switch os.Args[1] {
+	command := args[0]
+	switch command {
 	case "getMemo":
-		memoId, err := strconv.ParseInt(os.Args[2], 10, 64)
+		if len(args) < 2 {
+			log.Fatalf("usage: %s [--dev] getMemo <memoId>", os.Args[0])
+		}
+		memoId, err := strconv.ParseInt(args[1], 10, 64)
 		if err != nil {
 			log.Fatalf("invalid memoId: %v", err)
 		}
@@ -49,9 +74,12 @@ func main() {
 	case "listMemos":
 		listMemos(client)
 	case "createMemo":
-		createMemo(client, os.Args[2], os.Args[3])
+		if len(args) < 3 {
+			log.Fatalf("usage: %s [--dev] createMemo <title> <content>", os.Args[0])
+		}
+		createMemo(client, args[1], args[2])
 	default:
-		log.Fatalf("unknown command: %s", os.Args[1])
+		log.Fatalf("unknown command: %s", command)
 	}
 }
 
